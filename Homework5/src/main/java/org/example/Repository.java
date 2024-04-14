@@ -22,7 +22,7 @@ public class Repository {
     //try with resources
     //try normal ca la mama lui ->
     //adica ce ii dau in paranteze e ce fol si nu tb inchis la sfarsit
-    private void loadDocuments() {
+    public void loadDocuments() {
         try (Stream<Path> paths = Files.walk(Paths.get(directory))) {  //parcurg tot, merge prin toate fisierele
             paths.forEach(file -> {
                 try {
@@ -31,8 +31,8 @@ public class Repository {
                         if(dirName.compareTo(directory.substring(directory.lastIndexOf('/') + 1)) != 0) {
                             String[] split = dirName.split("_");
                             String personName = split[0];
-//                            System.out.println(dirName);
-//                            System.out.println(directory.substring(directory.lastIndexOf('/')));
+                               //System.out.println(dirName);
+                           //System.out.println(directory.substring(directory.lastIndexOf('/')));
 
                             int personId = Integer.parseInt(split[1]);
                             Person person = new Person(personId, personName);
@@ -81,9 +81,4 @@ public class Repository {
         return documents;
     }
 
-//    public void addPerson(Person person) {
-//        documents.put(person, new ArrayList<>());
-//    }
-//
-//    public void add
 }

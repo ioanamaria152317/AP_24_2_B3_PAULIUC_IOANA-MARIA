@@ -1,62 +1,122 @@
 package org.example;
 
-import freemarker.template.TemplateException;
+import org.apache.poi.ss.usermodel.*;
+import org.jgrapht.alg.clique.BronKerboschCliqueFinder;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.SimpleGraph;
 
-import java.io.BufferedReader;
+import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.*;
+import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws IOException, TemplateException {
-        Main app = new Main();
-        app.testRepo();
-    }
+    public static void main(String[] args) throws IOException {
+        //vreau perechea asta om-abilitate
+        Map<Person, List<String>> abilitati = new HashMap<>();
+        Repository repo = new Repository("C:/Users/ioana/OneDrive/Desktop/java/Homework5/test_repo");
+        repo.loadDocuments();
+        Map<Person, List<Document>> documents = repo.getDocuments();
 
-    private void testRepo() throws IOException, TemplateException {
-        var service = new RepositoryService();
+        //deci persoanei careia i-am dat export
+        //ii atasez abilitatile citite din excel
+        //intr-o lista de string uri, nu mai fac clasa
+        //abilitate
 
-        String commandLine;
-        BufferedReader console = new BufferedReader
-                (new InputStreamReader(System.in));
+        //file input stream citeste fisiere drept niste
+        //octeti
 
-        while (true) {
-            System.out.print("shell>");
-            commandLine = console.readLine();
+        //Desktop desktop = Desktop.getDesktop();
+        // desktop.open(new File("C:/Users/ioana/OneDrive/Desktop/java/Homework5/abilitati.xlsx"));
+        try (FileInputStream excelDeschide_te = new FileInputStream(new
+                File("C:/Users/ioana/OneDrive/Desktop/java/Homework5/abilitati.xlsx"));
+             Workbook workbook = WorkbookFactory.create(excelDeschide_te)) {
+            Sheet sheet = workbook.getSheetAt(0);
 
-            if (commandLine.isEmpty())
-                continue;
-
-            String[] split = commandLine.split(" ");
-            String command = split[0];
-            String[] arguments = new String[split.length - 1];
-            System.arraycopy(split, 1, arguments, 0, arguments.length);
-
-            if (command.equals("view")) {
-                if(arguments.length == 1)
-                    service.view(arguments[0]);
+            for (Person p : documents.keySet()) {
+                for (Row row : sheet) {
+                    // System.out.println("id:"+ p.id()+ "cell:"+ row.getRowNum());
+                    if (p.id() == row.getRowNum()) {
+                        List<String> abilitaati = new ArrayList<>();
+                        for (Cell cell : row) {
+                            if (cell.getColumnIndex() != 0 && cell.getColumnIndex() != 1) {
+                                String abilitate = cell.getStringCellValue();
+                                String[] abilSplit = abilitate.split(",");
+                                for (String abilitatee : abilSplit) {
+                                    abilitaati.add(abilitate.trim());
+                                }
+                            }
+                        }
+                        abilitati.put(p, abilitaati);
+                    }
+                }
             }
-
-            if (command.equals("report")) {
-                if(arguments.length == 2)
-                    service.report(new Repository(arguments[0]), arguments[1]);
-            }
-
-            if (command.equals("export")) {
-                if(arguments.length == 2)
-                    service.export(new Repository(arguments[0]), arguments[1]);
-            }
-
-            if (commandLine.equals("exit")) {
-                System.out.println("Terminating virtual shell");
-                System.exit(0);
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-//        service.print(repo);
-//        service.export(repo, "target/test_repo.json");
-//        service.view("target/test_repo.json");
-//        var doc = repo.findDocument("...");
-//        service.view(doc);
+        for (Map.Entry<Person, List<String>> entry : abilitati.entrySet()) {
+            Person person = entry.getKey();
+            List<String> abil = entry.getValue();
+            System.out.println("Person: " + person.name() + " (ID: " + person.id() + ")");
+            System.out.println("\tAbilitati: " + abil);
+        }
+
+        //nuj de ce le pune de doua ori, in fine
+
+        //vreau sa iau cele mai mari grupuri care au abil in comun
+        //clique: 4 noduri toate cu muchii intre ele
+        //oricum as lua 4 oameni dintr-un grup, ei au o abilitate in comun
+        //Bron–Kerbosch
+
+        //muchie->abilitate
+
+        SimpleGraph<Person, DefaultEdge> graph = createGraph(abilitati);
+
+        BronKerboschCliqueFinder<Person, DefaultEdge> cliqueFinder = new BronKerboschCliqueFinder<>(graph);
+        List<Set<Person>> maxCliques = new ArrayList<>();
+        for (Set<Person> clique : cliqueFinder) {
+            maxCliques.add(clique);
+        }
+
+        outputMaxGroups(maxCliques);
+    }
+
+    //map->>>graf
+    public static SimpleGraph<Person, DefaultEdge> createGraph(Map<Person, List<String>> abilitati) {
+        SimpleGraph<Person, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
+        for (Person person : abilitati.keySet()) {
+            graph.addVertex(person);
+        }
+        for (Person person1 : abilitati.keySet()) {
+            for (Person person2 : abilitati.keySet()) {
+                if (!person1.equals(person2) && haveCommonAbility(abilitati.get(person1), abilitati.get(person2))) {
+                    graph.addEdge(person1, person2);
+                }
+            }
+        }
+        return graph;
+    }
+
+    public static boolean haveCommonAbility(List<String> abilitati1, List<String> abilitati2) {
+        for (String abilitate : abilitati1) {
+            if (abilitati2.contains(abilitate)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void outputMaxGroups(List<Set<Person>> maxCliques) {
+        for (Set<Person> clique : maxCliques) {
+            System.out.println("Largest clique:");
+            for (Person person : clique) {
+                System.out.println(person);
+            }
+            System.out.println();
+        }
     }
 }
+
