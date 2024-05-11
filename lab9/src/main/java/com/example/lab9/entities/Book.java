@@ -14,8 +14,8 @@ import java.sql.Date;
 @Entity
 @Table(name="book", schema="public")
 @NamedQueries({
-        @NamedQuery(name = "Book.findById", query = "SELECT b FROM Book b WHERE b.id = :myId"),
-        @NamedQuery(name = "Book.findLikeTitle", query = "SELECT b FROM Book b WHERE b.title LIKE CONCAT('%', :title,'%')")
+        @NamedQuery(name = "Book.findById", query = "SELECT id FROM Book b WHERE b.id = :myId"),
+        @NamedQuery(name = "Book.findLikeTitle", query = "SELECT title FROM Book b WHERE b.title LIKE CONCAT('%', :title,'%')")
 })
 public class Book {
 
