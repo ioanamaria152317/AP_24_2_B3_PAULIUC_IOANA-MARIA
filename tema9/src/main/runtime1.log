@@ -1,0 +1,14 @@
+02:33:43,625 INFO  [org.hibernate.jpa.internal.util.LogHelper] - HHH000204: Processing PersistenceUnitInfo [name: ioana]
+02:33:43,727 INFO  [org.hibernate.Version] - HHH000412: Hibernate ORM core version 6.0.2.Final
+02:33:43,944 WARN  [org.hibernate.orm.deprecation] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.user], use [jakarta.persistence.jdbc.user] instead
+02:33:43,945 WARN  [org.hibernate.orm.deprecation] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.password], use [jakarta.persistence.jdbc.password] instead
+02:33:43,945 WARN  [org.hibernate.orm.deprecation] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.url], use [jakarta.persistence.jdbc.url] instead
+02:33:43,947 WARN  [org.hibernate.orm.deprecation] - HHH90000021: Encountered deprecated setting [javax.persistence.jdbc.driver], use [jakarta.persistence.jdbc.driver] instead
+02:33:44,254 WARN  [org.hibernate.orm.connections.pooling] - HHH10001002: Using built-in connection pool (not intended for production use)
+02:33:44,260 INFO  [org.hibernate.orm.connections.pooling] - HHH10001005: Loaded JDBC driver class: org.postgresql.Driver
+02:33:44,260 INFO  [org.hibernate.orm.connections.pooling] - HHH10001012: Connecting with JDBC URL [jdbc:postgresql://localhost:5432/anotherbook]
+02:33:44,260 INFO  [org.hibernate.orm.connections.pooling] - HHH10001001: Connection properties: {password=****, user=postgres}
+02:33:44,260 INFO  [org.hibernate.orm.connections.pooling] - HHH10001003: Autocommit mode: false
+02:33:44,262 INFO  [org.hibernate.orm.connections.pooling] - HHH10001115: Connection pool size: 20 (min=1)
+02:33:44,623 INFO  [SQL dialect] - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQLDialect
+02:33:44,816 INFO  [org.hibernate.orm.connections.pooling] - HHH10001008: Cleaning up connection pool [jdbc:postgresql://localhost:5432/anotherbook]
